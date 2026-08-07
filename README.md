@@ -1,7 +1,14 @@
 # SER-CNN-Transformer
 # Speech Emotion Recognition — CNN-Transformer + Multidimensional Attention
-This repository implements a Speech Emotion Recognition (SER) system based on a hybrid
-CNN-Transformer architecture enhanced with a Multidimensional Attention Mechanism.
+Trained on IEMOCAP. Merges all into a unified training pipeline. Uses a ResNet-style CNN with SE attention, Mixup, label smoothing, cosine annealing, and comprehensive graphical statistics. Accuracy - 64.37% Demo Link - https://huggingface.co/spaces/NipunD58/SpeechEmotionRecognition Usage - Use
+```bash
+python predict.py path/to/audio.wav 
+```
+for making predictions using pretrained model Use
+```bash
+python predict.py path/to/audio.wav 
+```
+for training the model from scratch
 
 ## Highlights
 - Hybrid CNN + Transformer backbone for robust speech representation
@@ -34,9 +41,9 @@ Notes:
 - Use `-g` to select GPU id (set to `-1` for CPU).
 - Use `-f` to change feature type (e.g., `mfcc`, `fbank` if supported).
 
-## Data
-- The repository contains helper scripts in `preprocessing/` to prepare the IEMOCAP features.
-- Example dataset folder: `data/IEMOCAP/` with precomputed feature files and checkpoints.
+# Additional Information
+This is a 2 in 4 of my emotion detection project in which I aim to use multiple types of data from camera to analyse the emotion of the user. This particular one is the Speech module. Aim of this particular segment - Take a audio from the user and display the emotions depicted in the audio Frontend - Gradio UI Backend - CNN-Transformer to detect emotions trained on IEMOCAP. UI/Output-
+![alt text](image.png)
 
 ## Project Structure
 - `train_IEMOCAP.py` — training entrypoint
@@ -53,7 +60,5 @@ Notes:
 - Training script saves checkpoints and logs final metrics to `data/IEMOCAP/`.
 - Add evaluation code or use `predict.py` to compute per-file predictions and aggregate metrics.
 
-
 ## License
 MIT
-

@@ -1,0 +1,7 @@
+torch
+timm
+librosa
+numpy
+gradio
+matplotlib
+soundfile
