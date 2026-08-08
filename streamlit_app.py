@@ -47,10 +47,10 @@ st.set_page_config(
 
 # ── Constants ────────────────────────────────────────────────────────
 EMOTION_CONFIG = {
-    "Neutral": {"emoji": "😐", "color": "#94a3b8", "desc": "Calm, baseline speaking tone"},
-    "Happy":   {"emoji": "😄", "color": "#10b981", "desc": "Positive, cheerful, elevated pitch"},
-    "Sad":     {"emoji": "😢", "color": "#38bdf8", "desc": "Subdued, lower energy, slow tempo"},
-    "Angry":   {"emoji": "😠", "color": "#f43f5e", "desc": "High intensity, elevated volume/pace"},
+    "Neutral": {"desc": "Calm, baseline speaking tone"},
+    "Happy":   {"desc": "Positive, cheerful, elevated pitch"},
+    "Sad":     {"desc": "Subdued, lower energy, slow tempo"},
+    "Angry":   {"desc": "High intensity, elevated volume/pace"},
 }
 
 DEFAULT_CHECKPOINT_CANDIDATES = [
@@ -314,10 +314,7 @@ def main():
         for emo, cfg in EMOTION_CONFIG.items():
             st.markdown(f"**{cfg['emoji']} {emo}**: *{cfg['desc']}*")
 
-        st.markdown("---")
-        st.markdown(
-            "💡 **Tip**: Audio is automatically converted to mono and resampled to 16,000 Hz for optimal model performance."
-        )
+
 
     # ── Load Model ──
     model, load_err = get_cached_model(checkpoint_path, device_choice)
