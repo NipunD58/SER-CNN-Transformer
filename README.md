@@ -1,6 +1,8 @@
 # SER-CNN-Transformer
 # Speech Emotion Recognition — CNN-Transformer 
-Trained on IEMOCAP. Merges all into a unified training pipeline. Uses a ResNet-style CNN with SE attention, Mixup, label smoothing, cosine annealing, and comprehensive graphical statistics. Accuracy - 64.37% Demo Link - 
+Trained on IEMOCAP. Merges all into a unified training pipeline. Uses a ResNet-style CNN with SE attention, Mixup, label smoothing, cosine annealing, and comprehensive graphical statistics. Accuracy - 64.37% 
+- Demo Link - https://ser-cnn-transformer.streamlit.app/
+- Video Link - https://drive.google.com/file/d/118PgHa2QSafC2TR36rfXQnWsteaF0Vkm/view?usp=sharing
 - Usage
 
 ```bash
