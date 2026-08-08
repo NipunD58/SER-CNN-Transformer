@@ -1,15 +1,28 @@
 # SER-CNN-Transformer
 # Speech Emotion Recognition — CNN-Transformer 
-Trained on IEMOCAP. Merges all into a unified training pipeline. Uses a ResNet-style CNN with SE attention, Mixup, label smoothing, cosine annealing, and comprehensive graphical statistics. Accuracy - 64.37% Demo Link - https://huggingface.co/spaces/NipunD58/SpeechEmotionRecognition Usage
+Trained on IEMOCAP. Merges all into a unified training pipeline. Uses a ResNet-style CNN with SE attention, Mixup, label smoothing, cosine annealing, and comprehensive graphical statistics. Accuracy - 64.37% Demo Link - 
+- Usage
 
 ```bash
 python predict.py path/to/audio.wav 
 ```
-for making predictions using pretrained model Use
+for making predictions using pretrained model.
+
+### Web Applications
+
+- Streamlit App:
+  ```bash
+  streamlit run streamlit_app.py
+  ```
+- Gradio App:
+  ```bash
+  python HF/app.py
+  ```
+
+for training the model from scratch:
 ```bash
-python predict.py path/to/audio.wav 
+python train_IEMOCAP.py -f mfcc -m CTMAM -b 128 -e 150 -l 0.001 -g 0
 ```
-for training the model from scratch
 
 ## Highlights
 - Hybrid CNN + Transformer backbone for robust speech representation
