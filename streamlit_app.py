@@ -39,7 +39,6 @@ warnings.filterwarnings("ignore", category=UserWarning, message="PySoundFile fai
 # ── Page Configuration ───────────────────────────────────────────────
 st.set_page_config(
     page_title="Speech Emotion Recognition | CTMAM",
-    page_icon="🎙️",
     layout="wide",
     initial_sidebar_state="expanded",
 )
@@ -47,10 +46,10 @@ st.set_page_config(
 
 # ── Constants ────────────────────────────────────────────────────────
 EMOTION_CONFIG = {
-    "Neutral": {"desc": "Calm, baseline speaking tone"},
-    "Happy":   {"desc": "Positive, cheerful, elevated pitch"},
-    "Sad":     {"desc": "Subdued, lower energy, slow tempo"},
-    "Angry":   {"desc": "High intensity, elevated volume/pace"},
+    "Neutral": {"color": "#94a3b8", "desc": "Calm, baseline speaking tone"},
+    "Happy":   {"color": "#10b981", "desc": "Positive, cheerful, elevated pitch"},
+    "Sad":     {"color": "#38bdf8", "desc": "Subdued, lower energy, slow tempo"},
+    "Angry":   {"color": "#f43f5e", "desc": "High intensity, elevated volume/pace"},
 }
 
 DEFAULT_CHECKPOINT_CANDIDATES = [
@@ -275,7 +274,7 @@ def run_ser_inference(model, wav, device, segment_length=1.8, overlap=1.6, nmfcc
 # ── Main Application ─────────────────────────────────────────────────
 def main():
     # ── Header ──
-    st.markdown('<div class="main-title">🎙️ Speech Emotion Recognition</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-title">Speech Emotion Recognition</div>', unsafe_allow_html=True)
     st.markdown(
         '<div class="subtitle">Deep Learning SER using <b>CTMAM</b> (CNN-Transformer + Multidimensional Attention) trained on the <b>IEMOCAP</b> dataset.</div>',
         unsafe_allow_html=True,
@@ -283,7 +282,7 @@ def main():
 
     # ── Sidebar ──
     with st.sidebar:
-        st.header("⚙️ Configuration")
+        st.header("Configuration")
         
         # Checkpoint Selector
         default_ckpt = find_default_checkpoint()
@@ -304,26 +303,25 @@ def main():
         )
 
         # Advanced audio slicing parameters
-        with st.expander("🛠️ Advanced Extraction Params", expanded=False):
+        with st.expander("Advanced Extraction Params", expanded=False):
             param_seg_len = st.slider("Segment Window (s)", min_value=1.0, max_value=3.0, value=1.8, step=0.1)
             param_overlap = st.slider("Segment Overlap (s)", min_value=0.5, max_value=1.7, value=1.6, step=0.1)
             param_nmfcc = st.number_input("MFCC Coefficients", min_value=13, max_value=40, value=26)
 
         st.markdown("---")
-        st.markdown("### 🏷️ Target Emotion Classes")
+        st.markdown("### Target Emotion Classes")
         for emo, cfg in EMOTION_CONFIG.items():
-            st.markdown(f"**{cfg['emoji']} {emo}**: *{cfg['desc']}*")
-
-
+            desc = cfg.get("desc", "")
+            st.markdown(f"**{emo}**: *{desc}*")
 
     # ── Load Model ──
     model, load_err = get_cached_model(checkpoint_path, device_choice)
     if load_err or model is None:
-        st.error(f"❌ Failed to load model weights: `{load_err}`\nPlease verify checkpoint path in sidebar.")
+        st.error(f"Failed to load model weights: `{load_err}`\nPlease verify checkpoint path in sidebar.")
         return
 
     # ── Input Method Tabs ──
-    tab_upload, tab_record = st.tabs(["📁 Upload File", "🎤 Record Audio"])
+    tab_upload, tab_record = st.tabs(["Upload File", "Record Audio"])
 
     audio_bytes = None
     source_name = "None"
@@ -347,7 +345,7 @@ def main():
                 audio_bytes = recorded_audio.read()
                 source_name = "Microphone Recording"
         else:
-            st.info("💡 Recording is supported in modern Streamlit or upload a voice recording via 'Upload File'.")
+            st.info("Recording is supported in modern Streamlit or upload a voice recording via 'Upload File'.")
 
     # ── Main Analysis Section ──
     if audio_bytes is not None:
@@ -357,7 +355,7 @@ def main():
                 duration = len(wav) / sr
 
                 if len(wav) == 0 or duration < 0.1:
-                    st.warning("⚠️ The provided audio is empty or too short.")
+                    st.warning("The provided audio is empty or too short.")
                     return
 
                 # Convert decoded 16kHz audio to clean WAV bytes for reliable browser playback
@@ -374,7 +372,7 @@ def main():
                 )
 
             # Audio Player & Quick Metrics
-            st.markdown("### 🎧 Audio Playback & Information")
+            st.markdown("### Audio Playback & Information")
             col_play, col_m1, col_m2, col_m3 = st.columns([2, 1, 1, 1])
             with col_play:
                 st.audio(playable_audio_bytes, format="audio/wav")
@@ -388,18 +386,19 @@ def main():
             st.markdown("---")
 
             # ── Prediction Results Section ──
-            st.markdown("### 🎯 Emotion Recognition Result")
+            st.markdown("### Emotion Recognition Result")
             res_col1, res_col2 = st.columns([1, 1.2])
 
             with res_col1:
-                top_cfg = EMOTION_CONFIG.get(pred_label, {"emoji": "🎭", "color": "#38bdf8", "desc": ""})
+                top_cfg = EMOTION_CONFIG.get(pred_label, {})
+                top_color = top_cfg.get("color", "#38bdf8")
+                top_desc = top_cfg.get("desc", "")
                 st.markdown(
                     f"""
-                    <div class="emotion-card" style="border-left: 6px solid {top_cfg['color']};">
-                        <div style="font-size: 3.2rem; margin-bottom: 0.2rem;">{top_cfg['emoji']}</div>
-                        <div style="font-size: 1.6rem; font-weight: 700; color: #f8fafc;">{pred_label}</div>
-                        <div class="metric-value" style="color: {top_cfg['color']};">{confidence * 100:.1f}%</div>
-                        <div style="color: #94a3b8; font-size: 0.9rem; margin-top: 0.5rem;">{top_cfg['desc']}</div>
+                    <div class="emotion-card" style="border-left: 6px solid {top_color}; padding: 1.5rem;">
+                        <div style="font-size: 1.8rem; font-weight: 700; color: #f8fafc;">{pred_label}</div>
+                        <div class="metric-value" style="color: {top_color}; margin: 0.5rem 0;">{confidence * 100:.1f}%</div>
+                        <div style="color: #94a3b8; font-size: 0.95rem;">{top_desc}</div>
                     </div>
                     """,
                     unsafe_allow_html=True,
@@ -409,14 +408,13 @@ def main():
                 st.markdown("**Emotion Probability Breakdown:**")
                 for emo in EMOTION_CLASSES:
                     p = prob_dict.get(emo, 0.0)
-                    cfg = EMOTION_CONFIG.get(emo, {"emoji": "", "color": "#38bdf8"})
                     is_winner = emo == pred_label
-                    prefix = "👑 " if is_winner else ""
-                    st.write(f"{prefix}{cfg['emoji']} **{emo}** — `{p * 100:.1f}%`")
+                    prefix = "[Top Prediction] " if is_winner else ""
+                    st.write(f"{prefix}**{emo}** — `{p * 100:.1f}%`")
                     st.progress(float(p))
 
             # ── Visualizations ──
-            st.markdown("### 📊 Acoustic Analysis")
+            st.markdown("### Acoustic Analysis")
             vcol1, vcol2 = st.columns(2)
 
             with vcol1:
@@ -431,7 +429,7 @@ def main():
 
             # ── Multi-segment Breakdown (for longer audios) ──
             if mfcc_feat.shape[0] > 1:
-                with st.expander("🔍 View Segment-Level Timeline Analysis", expanded=False):
+                with st.expander("View Segment-Level Timeline Analysis", expanded=False):
                     st.markdown(
                         f"The audio was sliced into **{mfcc_feat.shape[0]} overlapping segments** (Window: {param_seg_len}s, Hop: {param_seg_len - param_overlap:.2f}s):"
                     )
@@ -440,7 +438,7 @@ def main():
                         seg_pred = EMOTION_CLASSES[int(np.argmax(sp))]
                         seg_data.append({
                             "Segment #": i + 1,
-                            "Predicted Emotion": f"{EMOTION_CONFIG[seg_pred]['emoji']} {seg_pred}",
+                            "Predicted Emotion": seg_pred,
                             "Neutral": f"{sp[0]*100:.1f}%",
                             "Happy": f"{sp[1]*100:.1f}%",
                             "Sad": f"{sp[2]*100:.1f}%",
@@ -449,10 +447,10 @@ def main():
                     st.dataframe(seg_data, use_container_width=True)
 
         except Exception as err:
-            st.error(f"❌ Error during audio processing or inference: {err}")
+            st.error(f"Error during audio processing or inference: {err}")
             st.exception(err)
     else:
-        st.info("👆 Please upload an audio file or record your voice using the microphone to begin analysis.")
+        st.info("Please upload an audio file or record your voice using the microphone to begin analysis.")
 
 
 if __name__ == "__main__":
